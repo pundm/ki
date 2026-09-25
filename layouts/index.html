@@ -1,0 +1,64 @@
+{{ define "main" }}
+<main class="page" id="content">
+  <p class="intro">record of all matches played by -KI-<br>click map field to see a screenshot</p>
+
+  <table class="content summary" aria-label="Match summary">
+    <tbody>
+      <tr>
+        <td>{{ len (where site.Data.matches "result" "win") }}</td>
+        <td>{{ len (where site.Data.matches "result" "draw") }}</td>
+        <td>{{ len (where site.Data.matches "result" "loss") }}</td>
+        <td>{{ len site.Data.matches }}</td>
+      </tr>
+      <tr>
+        <td>won</td><td>drawn</td><td>lost</td><td>total</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="table-wrap">
+    <table class="content matches" aria-label="-KI- match results">
+      <thead>
+        <tr><th scope="col"></th><th scope="col">clan</th><th scope="col">date</th><th scope="col">type</th><th scope="col">map1</th><th scope="col">map2</th><th scope="col"></th></tr>
+      </thead>
+      <tbody>
+      {{ range $i, $match := site.Data.matches }}
+        {{ $stripe := mod $i 2 }}
+        <tr class="{{ if eq $stripe 0 }}dark{{ else }}light{{ end }}">
+          <td class="flag-cell">
+            <span class="flag-fallback" aria-hidden="true">{{ $match.flag_emoji }}</span>
+            {{ if $match.flag }}<img class="flag" src="{{ (printf "images/flags/%s" $match.flag) | relURL }}" alt="">{{ end }}
+          </td>
+          <td>
+            {{ if $match.clan_url }}
+              <a href="{{ $match.clan_url | safeURL }}" target="_blank" rel="noopener noreferrer">{{ $match.clan }}</a>
+            {{ else }}{{ $match.clan }}{{ end }}
+          </td>
+          <td>{{ $match.date }}</td>
+          <td>{{ $match.type }}</td>
+          {{ range $mapIndex, $map := $match.maps }}
+            {{ $shot := index $match.screenshots $mapIndex }}
+            <td class="map-cell{{ if $shot }} screenshot-trigger{{ end }}"{{ if $shot }} tabindex="0" role="button" data-screenshot-id="{{ $shot.id }}" data-half="{{ $shot.half }}" data-width="{{ $shot.width }}" data-height="{{ $shot.height }}" data-map="{{ $map.name }}" title="click to see a screenshot" aria-label="{{ $map.name }}, click to see a screenshot"{{ end }}>
+              {{ $map.name }}<br>{{ $map.score1 }} - {{ $map.score2 }}
+            </td>
+          {{ end }}
+          <td class="result {{ $match.result }}">{{ $match.result }}</td>
+        </tr>
+      {{ end }}
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<div class="lightbox" id="lightbox" hidden aria-hidden="true">
+  <div class="lightbox-backdrop" data-close></div>
+  <div class="lightbox-dialog" role="dialog" aria-modal="true" aria-labelledby="lightbox-title" tabindex="-1">
+    <button class="lightbox-close" type="button" aria-label="Close screenshot" data-close>&times;</button>
+    <h2 id="lightbox-title" class="visually-hidden">Match screenshot</h2>
+    <div class="lightbox-image-wrap">
+      <img id="lightbox-image" alt="">
+      <p id="lightbox-status" class="lightbox-status" hidden></p>
+    </div>
+  </div>
+</div>
+{{ end }}

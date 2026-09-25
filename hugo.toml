@@ -1,0 +1,10 @@
+baseURL = "http://localhost:1313/"
+languageCode = "en"
+title = "[-KI-] results"
+canonifyURLs = false
+removePathAccents = true
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = false
