@@ -1,5 +1,5 @@
 # [-KI-]
-old clanwar results from [-KI-]
+old clanwar results with screenshots from [-KI-]
 
 site was designed by Phox
 
